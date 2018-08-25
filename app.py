@@ -3,11 +3,23 @@ from pymongo import MongoClient
 from flask_pymongo import PyMongo
 import pandas as pd
 import csv
+import os
 
 #from ipynbfiledconverted import the function
 
 app = Flask(__name__)
-app.config["MONGO_URI"] = "mongodb://localhost:27017/planets_db"
+
+# from pymongo import MongoClient
+
+# client = MongoClient(os.environ['MONGOLAB_URI'])
+# db = client.get_default_database()
+
+mongolab_uri = os.getenv('MONGOLAB_URI')
+
+if mongolab_uri:
+    app.config["MONGO_URI"] = mongolab_uri
+else:
+    app.config["MONGO_URI"] = "mongodb://localhost:27017/planets_db"
 mongo = PyMongo(app)
 mongo.db.planets_db.drop()
 info = pd.read_csv("datasets/cleaned_planets.csv", index_col=False).drop("Unnamed: 0", axis=1)
